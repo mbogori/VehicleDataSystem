@@ -1,0 +1,21 @@
+# Compiled Java files
+*.class
+
+# Build folders
+target/
+build/
+out/
+
+# VS Code files
+.vscode/
+
+# IntelliJ files
+.idea/
+*.iml
+
+# NetBeans private configuration
+nbproject/private/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
