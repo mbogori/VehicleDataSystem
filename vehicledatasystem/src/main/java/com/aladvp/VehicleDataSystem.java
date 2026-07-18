@@ -408,7 +408,7 @@ public class VehicleDataSystem {
                     / (double) numberOfRuns
                     / 1_000_000.0;
 
-            // Display the measured averages for both algorithms 
+            // Display the measured averages for both algorithms
             System.out.printf(
                     "%d records:%n"
                             + "  Bubble Sort average: %.6f ms%n"
