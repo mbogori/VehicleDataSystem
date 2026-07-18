@@ -89,15 +89,23 @@ public class VehicleDataSystem {
             for (int index = 0; index < recordsToDisplay; index++) {
                 System.out.println(bubbleSortedVehicles[index]);
             }
+
+            /*
+             * Question 2: Prepare the Bubble Sort performance experiment.
+             * The original unsorted data is supplied to the experiment method.
+             */
+            runBubbleSortExperiment(vehicles);
+
         } catch (IOException exception) {
             System.err.println(
                     "The vehicle data could not be loaded: "
                             + exception.getMessage());
         }
+
     }
 
     /**
-     * Loads all valid records from the specified CSV file.
+     * Loads all valid records from the Vehicles.csv file.
      *
      * @param csvPath the location of vehicles.csv
      * @return an array containing the loaded Vehicle objects
@@ -162,6 +170,104 @@ public class VehicleDataSystem {
 
         // Convert the growing ArrayList into a Vehicle array
         return loadedVehicles.toArray(new Vehicle[0]);
+
+    }
+
+    /**
+     * Question 2: Prepares the Bubble Sort performance experiment.
+     *
+     * Each input size is tested three times. A fresh copy of the original
+     * unsorted data is created before every run.
+     *
+     * @param originalVehicles the original unsorted Vehicle array
+     */
+    private static void runBubbleSortExperiment(
+            Vehicle[] originalVehicles) {
+
+        // Input sizes required by the CA1 brief
+        int[] inputSizes = { 10, 100, 1000, 5000, 10000 };
+
+        // Each input size must be tested at least three times
+        int numberOfRuns = 3;
+
+        System.out.println("\nBUBBLE SORT PERFORMANCE EXPERIMENT");
+
+        // Process each required input size
+        for (int inputSize : inputSizes) {
+
+            /*
+             * Prevent an invalid copy request if the supplied dataset
+             * contains fewer records than the requested input size.
+             */
+            if (inputSize > originalVehicles.length) {
+                System.out.println(
+                        "Skipping " + inputSize
+                                + " records: insufficient data.");
+                continue;
+            }
+
+            System.out.println("\nInput size: " + inputSize);
+
+            // Accumulates the elapsed time from all three measured runs
+            long totalElapsedTime = 0L;
+
+            // Perform three independent measured runs
+            for (int run = 1; run <= numberOfRuns; run++) {
+
+                /*
+                 * Create a fresh unsorted copy before starting the timer.
+                 * Copying time is not part of the Bubble Sort measurement.
+                 */
+                Vehicle[] testData = Arrays.copyOf(
+                        originalVehicles,
+                        inputSize);
+
+                // Record the time immediately before Bubble Sort starts
+                long startTime = System.nanoTime();
+
+                SortAlgorithms.bubbleSort(
+                        testData,
+                        VALUE_THEN_ID);
+
+                // Record the time immediately after Bubble Sort finishes
+                long endTime = System.nanoTime();
+
+                // Calculate the duration of this run
+                long elapsedTime = endTime - startTime;
+
+                totalElapsedTime += elapsedTime;
+
+                /*
+                 * Verify the result after stopping the timer so that the
+                 * verification time is not included in the measurement.
+                 */
+                boolean sortedCorrectly = SortAlgorithms.isSorted(
+                        testData,
+                        VALUE_THEN_ID);
+
+                if (!sortedCorrectly) {
+                    throw new IllegalStateException(
+                            "Bubble Sort failed for input size " + inputSize);
+                }
+
+                System.out.printf(
+                        "Run %d: %d ns (%.6f ms)%n",
+                        run,
+                        elapsedTime,
+                        elapsedTime / 1_000_000.0);
+            }
+
+            // Calculate and display the average time for this input size
+            double averageElapsedTime = totalElapsedTime / (double) numberOfRuns;
+
+            System.out.printf(
+                    "Average time for %d records: %.0f ns (%.6f ms)%n",
+                    inputSize,
+                    averageElapsedTime,
+                    averageElapsedTime / 1_000_000.0);
+
+        }
+
     }
 
 }
