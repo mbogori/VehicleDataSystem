@@ -1,11 +1,12 @@
 package com.aladvp;
 
-import java.util.Comparator;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -60,7 +61,34 @@ public class VehicleDataSystem {
                 System.out.println("\nLast vehicle:");
                 System.out.println(vehicles[vehicles.length - 1]);
             }
+            /*
+             * Question 1: Create a copy so the original unsorted data
+             * remains available for later performance experiments.
+             */
+            Vehicle[] bubbleSortedVehicles = Arrays.copyOf(
+                    vehicles,
+                    vehicles.length);
 
+            // Sort the copied array by Value, then ID
+            SortAlgorithms.bubbleSort(
+                    bubbleSortedVehicles,
+                    VALUE_THEN_ID);
+
+            // Verify that all records were correctly ordered
+            boolean sortedCorrectly = SortAlgorithms.isSorted(
+                    bubbleSortedVehicles,
+                    VALUE_THEN_ID);
+
+            System.out.println(
+                    "\nBubble Sort completed correctly: " + sortedCorrectly);
+
+            System.out.println("\nFirst three records after Bubble Sort:");
+
+            int recordsToDisplay = Math.min(3, bubbleSortedVehicles.length);
+
+            for (int index = 0; index < recordsToDisplay; index++) {
+                System.out.println(bubbleSortedVehicles[index]);
+            }
         } catch (IOException exception) {
             System.err.println(
                     "The vehicle data could not be loaded: "
@@ -69,7 +97,11 @@ public class VehicleDataSystem {
     }
 
     /**
-     * Loads all records from vehicles.csv into a Vehicle array.
+     * Loads all valid records from the specified CSV file.
+     *
+     * @param csvPath the location of vehicles.csv
+     * @return an array containing the loaded Vehicle objects
+     * @throws IOException if the file cannot be read or contains invalid data
      */
     public static Vehicle[] loadVehicles(Path csvPath) throws IOException {
 
