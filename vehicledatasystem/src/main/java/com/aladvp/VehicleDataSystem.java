@@ -96,6 +96,36 @@ public class VehicleDataSystem {
              */
             runBubbleSortExperiment(vehicles);
 
+            // Question 3: Sort a fresh copy using Quick Sort
+            Vehicle[] quickSortedVehicles = Arrays.copyOf(
+                    vehicles,
+                    vehicles.length);
+
+            SortAlgorithms.quickSort(
+                    quickSortedVehicles,
+                    VALUE_THEN_ID);
+
+            // Verify that Quick Sort ordered all records correctly
+            boolean quickSortCorrect = SortAlgorithms.isSorted(
+                    quickSortedVehicles,
+                    VALUE_THEN_ID);
+
+            System.out.println(
+                    "\nQuick Sort completed correctly: " + quickSortCorrect);
+
+            System.out.println("\nFirst three records after Quick Sort:");
+
+            int quickRecordsToDisplay = Math.min(
+                    3,
+                    quickSortedVehicles.length);
+
+            for (int index = 0; index < quickRecordsToDisplay; index++) {
+                System.out.println(quickSortedVehicles[index]);
+            }
+
+            // Question 3: Compare Bubble Sort and Quick Sort performance
+            runSortComparison(vehicles);
+
         } catch (IOException exception) {
             System.err.println(
                     "The vehicle data could not be loaded: "
@@ -270,4 +300,122 @@ public class VehicleDataSystem {
 
     }
 
+    /**
+     * Question 3: Compares the average running times of Bubble Sort
+     * and Quick Sort using 1,000 and 10,000 records.
+     *
+     * Each algorithm receives a fresh copy of the same unsorted data.
+     *
+     * @param originalVehicles the original unsorted Vehicle array
+     */
+    private static void runSortComparison(
+            Vehicle[] originalVehicles) {
+
+        // Input sizes required for the Bubble Sort and Quick Sort comparison
+        int[] comparisonSizes = { 1000, 10000 };
+
+        int numberOfRuns = 3;
+
+        System.out.println("\nBUBBLE SORT AND QUICK SORT COMPARISON");
+
+        for (int inputSize : comparisonSizes) {
+
+            if (inputSize > originalVehicles.length) {
+                System.out.println(
+                        "Skipping " + inputSize
+                                + " records: insufficient data.");
+                continue;
+            }
+
+            /*
+             * Warm up both algorithms before collecting the measured
+             * results, reducing one-off JVM effects.
+             */
+            Vehicle[] bubbleWarmUp = Arrays.copyOf(
+                    originalVehicles,
+                    inputSize);
+
+            Vehicle[] quickWarmUp = Arrays.copyOf(
+                    originalVehicles,
+                    inputSize);
+
+            SortAlgorithms.bubbleSort(
+                    bubbleWarmUp,
+                    VALUE_THEN_ID);
+
+            SortAlgorithms.quickSort(
+                    quickWarmUp,
+                    VALUE_THEN_ID);
+
+            long bubbleTotalTime = 0L;
+            long quickTotalTime = 0L;
+
+            for (int run = 1; run <= numberOfRuns; run++) {
+
+                /*
+                 * Both algorithms receive independent copies of the
+                 * same original records for a fair comparison.
+                 */
+                Vehicle[] bubbleData = Arrays.copyOf(
+                        originalVehicles,
+                        inputSize);
+
+                Vehicle[] quickData = Arrays.copyOf(
+                        originalVehicles,
+                        inputSize);
+
+                // Measure Bubble Sort
+                long bubbleStart = System.nanoTime();
+
+                SortAlgorithms.bubbleSort(
+                        bubbleData,
+                        VALUE_THEN_ID);
+
+                long bubbleEnd = System.nanoTime();
+
+                bubbleTotalTime += bubbleEnd - bubbleStart;
+
+                // Measure Quick Sort
+                long quickStart = System.nanoTime();
+
+                SortAlgorithms.quickSort(
+                        quickData,
+                        VALUE_THEN_ID);
+
+                long quickEnd = System.nanoTime();
+
+                quickTotalTime += quickEnd - quickStart;
+
+                /*
+                 * Verify both results outside their measured sections.
+                 */
+                if (!SortAlgorithms.isSorted(bubbleData, VALUE_THEN_ID)) {
+                    throw new IllegalStateException(
+                            "Bubble Sort failed for " + inputSize + " records.");
+                }
+
+                if (!SortAlgorithms.isSorted(quickData, VALUE_THEN_ID)) {
+                    throw new IllegalStateException(
+                            "Quick Sort failed for " + inputSize + " records.");
+                }
+            }
+
+            double bubbleAverageMilliseconds = bubbleTotalTime
+                    / (double) numberOfRuns
+                    / 1_000_000.0;
+
+            double quickAverageMilliseconds = quickTotalTime
+                    / (double) numberOfRuns
+                    / 1_000_000.0;
+
+            // Display the measured averages for both algorithms 
+            System.out.printf(
+                    "%d records:%n"
+                            + "  Bubble Sort average: %.6f ms%n"
+                            + "  Quick Sort average:  %.6f ms%n",
+                    inputSize,
+                    bubbleAverageMilliseconds,
+                    quickAverageMilliseconds);
+        }
+    }
 }

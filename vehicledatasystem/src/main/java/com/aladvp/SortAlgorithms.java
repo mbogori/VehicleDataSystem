@@ -103,9 +103,122 @@ public final class SortAlgorithms {
         return true;
     }
 
+    /**
+     * Question 3: Sorts an array into ascending order using Quick Sort.
+     *
+     * This public method starts the recursive sorting process.
+     *
+     * @param data       the array to sort
+     * @param comparator the comparison rule used by the algorithm
+     */
+    public static <T> void quickSort(
+            T[] data,
+            Comparator<? super T> comparator) {
+
+        /*
+         * An empty array or an array containing one item is already sorted.
+         */
+        if (data.length <= 1) {
+            return;
+        }
+
+        // Start by processing the complete array
+        quickSort(
+                data,
+                0,
+                data.length - 1,
+                comparator);
+    }
+
+    /**
+     * Recursively sorts the section between the low and high indexes.
+     */
+    private static <T> void quickSort(
+            T[] data,
+            int low,
+            int high,
+            Comparator<? super T> comparator) {
+
+        /*
+         * Base case: a section containing zero or one item
+         * does not require any further sorting.
+         */
+        if (low >= high) {
+            return;
+        }
+
+        /*
+         * The left and right indexes scan towards each other
+         * while partitioning the current section.
+         */
+        int left = low;
+        int right = high;
+
+        /*
+         * Select the record at the middle index as the pivot.
+         * The pivot is the reference point used to divide the section.
+         */
+        T pivot = data[low + (high - low) / 2];
+
+        /*
+         * Partition the current section by moving the two indexes
+         * towards each other until they cross.
+         */
+        while (left <= right) {
+
+            /*
+             * Move left past records that already belong
+             * on the smaller side of the pivot.
+             */
+            while (comparator.compare(data[left], pivot) < 0) {
+                left++;
+            }
+
+            /*
+             * Move right past records that already belong
+             * on the larger side of the pivot.
+             */
+            while (comparator.compare(data[right], pivot) > 0) {
+                right--;
+            }
+
+            /*
+             * If the indexes have not crossed, the two records
+             * are on the wrong sides and should exchange positions.
+             */
+            if (left <= right) {
+                swap(data, left, right);
+
+                /*
+                 * Move both indexes after the swap. This also prevents
+                 * an infinite loop when a record equals the pivot.
+                 */
+                left++;
+                right--;
+            }
+        }
+        /*
+         * Recursively sort the remaining left section.
+         * This section extends from low to right.
+         */
+        if (low < right) {
+            quickSort(data, low, right, comparator);
+        }
+
+        /*
+         * Recursively sort the remaining right section.
+         * This section extends from left to high.
+         */
+        if (left < high) {
+            quickSort(data, left, high, comparator);
+        }
+    }
+
+
+
+
+
+
+
     
-
-
-
-
 }
