@@ -428,6 +428,63 @@ public class VehicleDataSystem {
         }
 
         /**
+         * Question 6: Checks that a selected text field is not
+         * empty and does not contain digits only.
+         *
+         * @param value     the text entered by the user
+         * @param fieldName the field's readable name
+         * @return the trimmed value when it is valid
+         * @throws InvalidTextFieldException if the value is invalid
+         */
+        private static String validateTextField(String value, String fieldName) throws InvalidTextFieldException {
+
+                // Remove spaces before and after the entered value
+                String cleanedValue = value.trim();
+
+                /*
+                 * The regular expression "\\d+" means one or more digits
+                 * with no letters or other characters.
+                 */
+                boolean containsOnlyDigits = cleanedValue.matches("\\d+");
+
+                if (cleanedValue.isEmpty() || containsOnlyDigits) {
+                        throw new InvalidTextFieldException(fieldName);
+                }
+
+                return cleanedValue;
+        }
+
+        /**
+         * Question 6: Repeatedly reads a selected text field until
+         * the user provides a valid value.
+         *
+         * @param input     the Scanner used for keyboard input
+         * @param fieldName the name displayed in the prompt
+         * @return a valid, trimmed text value
+         */
+        private static String readValidTextField(Scanner input, String fieldName) {
+
+                while (true) {
+
+                        System.out.print("Enter " + fieldName + ": ");
+                        String enteredValue = input.nextLine();
+
+                        try {
+
+                                // This method may throw our custom exception
+                                return validateTextField(
+                                                enteredValue,
+                                                fieldName);
+
+                        } catch (InvalidTextFieldException exception) {
+
+                                // Explain the problem and allow the loop to ask again
+                                System.out.println(exception.getMessage());
+                        }
+                }
+        }
+
+        /**
          * Question 5: Reads the new vehicle details from the user
          * and passes them to the method that expands the array.
          *
@@ -435,6 +492,7 @@ public class VehicleDataSystem {
          * @param input    the Scanner used to read keyboard input
          * @return the expanded vehicle array
          */
+
         private static Vehicle[] readAndAddVehicle(
                         Vehicle[] vehicles,
                         Scanner input) {
@@ -451,8 +509,11 @@ public class VehicleDataSystem {
                 System.out.print("Enter vehicle name: ");
                 String name = input.nextLine().trim();
 
-                System.out.print("Enter fuel type: ");
-                String fuel = input.nextLine().trim();
+                /*
+                 * Question 6: Fuel cannot be empty or contain digits only.
+                 * The method continues asking until valid fuel is entered.
+                 */
+                String fuel = readValidTextField(input,"fuel");
 
                 System.out.print("Enter location: ");
                 String location = input.nextLine().trim();
