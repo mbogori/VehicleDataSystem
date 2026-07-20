@@ -16,6 +16,15 @@ public class Vehicle {
     private int postcode;
     private long value;
 
+    /**
+     * Question 5: Creates an empty Vehicle whose fields
+     * can subsequently be assigned using setter methods.
+     */
+    public Vehicle() {
+    }
+
+    
+
     // Constructor used to create a Vehicle object from one CSV record
     public Vehicle(int id, String name, String fuel,
             String location, int postcode, long value) {
