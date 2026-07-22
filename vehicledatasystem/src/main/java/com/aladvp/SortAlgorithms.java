@@ -56,7 +56,7 @@ public final class SortAlgorithms {
 
     } // End of bubbleSort
 
-    /*
+    /**
      * Exchanges the objects stored at two positions in an array.
      *
      * @param data the array containing the objects
@@ -64,7 +64,7 @@ public final class SortAlgorithms {
      * @param firstIndex the position of the first object
      * 
      * @param secondIndex the position of the second object
-     */
+    */
     private static <T> void swap(
             T[] data,
             int firstIndex,
